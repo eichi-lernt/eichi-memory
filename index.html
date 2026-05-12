@@ -235,9 +235,9 @@
       place-items:center;
       overflow:hidden;
 
-      /* Rand mit Eichelmuster (fallback: grüner Rahmen) */
+      /* ✅ Ordnerstruktur: Bild liegt in /bilder */
       border: 10px solid rgba(63,95,37,.8);
-      border-image: url("acorn-border.png") 40 round;
+      border-image: url("bilder/acorn-border.png") 40 round;
       background: rgba(255,255,255,.92);
     }
 
@@ -250,7 +250,8 @@
     .back .eichi{
       width: 72%;
       height: 72%;
-      background: url("eichi.png") center/contain no-repeat;
+      /* ✅ Ordnerstruktur: Bild liegt in /bilder */
+      background: url("bilder/eichi.png") center/contain no-repeat;
       filter: drop-shadow(0 8px 10px rgba(0,0,0,.10));
     }
 
@@ -337,7 +338,6 @@
 
       <div id="overlay" class="overlay" role="dialog" aria-modal="true" aria-label="Geschafft">
         <div class="winCard">
-          <!-- „Geschafft“-Symbol (SVG) -->
           <svg class="winIcon" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
             <circle cx="60" cy="60" r="54" fill="rgba(242,201,76,.65)" stroke="rgba(63,95,37,.75)" stroke-width="4"/>
             <path d="M35 70c8 18 42 18 50 0" fill="none" stroke="rgba(63,95,37,.85)" stroke-width="6" stroke-linecap="round"/>
@@ -368,7 +368,7 @@
       <button class="startBtn" id="startBtn">F3: Start</button>
 
       <p style="margin:12px 4px 0; font-size:12px; opacity:.75;">
-        Lege <b>eichi.png</b> und <b>acorn-border.png</b> in denselben Ordner wie diese Datei.
+        Bilder liegen in <b>bilder/</b> → <b>bilder/eichi.png</b> und <b>bilder/acorn-border.png</b>.
       </p>
     </aside>
   </div>
@@ -384,7 +384,6 @@
         10: { cols: 5, rows: 2 },
         12: { cols: 4, rows: 3 }
       },
-      // Anteil der Paare aus 11..20, wenn Zahlenraum bis 20 gewählt ist:
       prefer11to20: 0.80
     };
 
@@ -411,13 +410,11 @@
         btn.type = 'button';
         btn.setAttribute('aria-pressed', String(n === selectedCount));
         btn.title = `${n} Karten`;
-
         btn.appendChild(makeLayoutIcon(n));
         btn.addEventListener('click', () => {
           selectedCount = n;
           updatePressedStates(countButtonsEl, btn);
         });
-
         countButtonsEl.appendChild(btn);
       });
     }
@@ -443,13 +440,11 @@
         btn.type = 'button';
         btn.setAttribute('aria-pressed', String(r === selectedRange));
         btn.title = `Zahlenraum bis ${r}`;
-
         btn.appendChild(makeRangeIcon(r));
         btn.addEventListener('click', () => {
           selectedRange = r;
           updatePressedStates(rangeButtonsEl, btn);
         });
-
         rangeButtonsEl.appendChild(btn);
       });
     }
@@ -472,7 +467,6 @@
         c2.className = 'cell ' + (r >= 20 ? 'on' : '');
         row2.appendChild(c2);
       }
-
       if(r === 10){
         [...row2.children].forEach(c => c.classList.remove('on'));
       }
@@ -525,7 +519,6 @@
       enterPlayMode();
     }
 
-    // Deck mit Gewichtung: bis 20 -> überwiegend 11..20
     function buildDeck(cardCount, rangeMax){
       const pairCount = cardCount / 2;
       const range = (a,b) => Array.from({length: b-a+1}, (_,i)=> a+i);
@@ -574,7 +567,6 @@
 
     function renderDeck(cards){
       gridEl.innerHTML = '';
-
       const { cols } = CONFIG.layouts[selectedCount];
       gridEl.style.gridTemplateColumns = `repeat(${cols}, var(--card-w))`;
 
@@ -652,11 +644,7 @@
     function resetPicks(clearStatus){
       firstPick = null;
       secondPick = null;
-      if(clearStatus){
-        setStatus(`Weiter! Paare gefunden: ${matches} / ${selectedCount/2}`);
-      }else{
-        setStatus(`Treffer! Paare gefunden: ${matches} / ${selectedCount/2}`);
-      }
+      setStatus(`${clearStatus ? 'Weiter!' : 'Treffer!'} Paare gefunden: ${matches} / ${selectedCount/2}`);
     }
 
     function flipCard(cardEl, on){
@@ -673,7 +661,6 @@
       statusEl.textContent = text;
     }
 
-    // Zahl vorlesen (Web Speech API)
     function speakNumber(n){
       const num = String(n);
       if(!('speechSynthesis' in window)) return;
@@ -705,11 +692,9 @@
       return arr;
     }
 
-    // Initial UI
     buildCountButtons();
     buildRangeButtons();
 
-    // Default-Ansicht (noch nicht PlayMode)
     deck = buildDeck(selectedCount, selectedRange);
     renderDeck(deck);
     setStatus(`Wähle rechts Einstellungen und drücke Start.`);
